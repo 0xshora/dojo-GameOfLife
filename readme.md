@@ -8,7 +8,7 @@ This integration taps into the powerful libraries designed by [Lattice](https://
 
 ### Initial Setup
 
-The repository already contains the `dojo-starter` as a submodule. Feel free to remove it if you prefer.
+The repository already contains the `dojo-gol` as a submodule. Feel free to remove it if you prefer.
 
 **Prerequisites:** First and foremost, ensure that Dojo is installed on your system. If it isn't, you can easily get it set up with:
 
@@ -37,13 +37,13 @@ git submodule update --init --recursive
 1. **Terminal 1 - Katana**:
 
 ```console
-cd dojo-starter && katana --disable-fee
+cd dojo-gol && katana --disable-fee
 ```
 
 2. **Terminal 2 - Contracts**:
 
 ```console
-cd dojo-starter && sozo build && sozo migrate
+cd dojo-gol && sozo build && sozo migrate
 
 // Basic Auth - This will allow burner Accounts to interact with the contracts
 sozo auth writer Position move
@@ -66,10 +66,10 @@ cd client && bun install && bun dev
 
 4. **Terminal 4 - Torii**:
 
-Uncomment the 'world_address' parameter in `dojo-starter/Scarb.toml` then:
+Uncomment the 'world_address' parameter in `dojo-gol/Scarb.toml` then:
 
 ```console
-cd dojo-starter && torii
+cd dojo-gol && torii
 ```
 
 Upon completion, launch your browser and navigate to http://localhost:5173/. You'll be greeted by the running example!
