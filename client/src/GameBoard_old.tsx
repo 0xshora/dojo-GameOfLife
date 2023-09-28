@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { useComponentValue } from "@latticexyz/react";
+import { useComponentValue, useRow } from "@latticexyz/react";
 // import { useMUD } from "./MUDContext";
 import { useDojo } from './DojoContext';
 
-import { Direction, } from './dojo/createSystemCalls'
-// import { hexToArray } from "@latticexyz/utils";
-import { EntityIndex, setComponent } from '@latticexyz/recs';
-import { getFirstComponentByType } from './utils';
+import { hexToArray } from "@latticexyz/utils";
 // import { world } from "./mud/world";
-// import { Pause, Play, Power, PlayCircle } from "lucide-react";
+import { Pause, Play, Power, PlayCircle } from "lucide-react";
 
 function getCellColor(cell: number | undefined): string {
   const _cell = Number(cell);
@@ -42,68 +39,6 @@ function getCellColor(cell: number | undefined): string {
 }
 
 export const GameBoard = () => {
-  const {
-    setup: {
-        systemCalls: { spawn, move },
-        components: { Moves, Position },
-        network: { graphSdk, call }
-      },
-      account: { create, list, select, account, isDeploying }
-    } = useDojo();
-
-    // entity id - this example uses the account address as the entity id
-  const entityId = account.address;
-
-  // get current component values
-  const position = useComponentValue(Position, parseInt(entityId.toString()) as EntityIndex);
-  const moves = useComponentValue(Moves, parseInt(entityId.toString()) as EntityIndex);
-
-  useEffect(() => {
-
-    if (!entityId) return;
-
-    const fetchData = async () => {
-      const { data } = await graphSdk.getEntities();
-
-      if (data) {
-        const remaining = getFirstComponentByType(data.entities?.edges, 'Moves') as Moves;
-        const position = getFirstComponentByType(data.entities?.edges, 'Position') as Position;
-
-        setComponent(Moves, parseInt(entityId.toString()) as EntityIndex, { remaining: remaining.remaining })
-        setComponent(Position, parseInt(entityId.toString()) as EntityIndex, { x: position.x, y: position.y })
-      }
-    }
-    fetchData();
-  }, [account.address]);
-
-  
-  return (
-    <>
-      <div className="flex justify-center pt-2 pb-4 font-dot text-xl">
-        <div className="mr-8">
-          Cycle: 0
-          {/* Cycle: {BigInt(calculatedCount?.value ?? 0).toLocaleString()} */}
-        </div>
-        <div className="">
-          {/* Cells: {BigInt(activeCells).toLocaleString()} */}
-          Cells: 10
-        </div>
-      </div>
-
-      {entityId ? (
-        <div>
-          hello
-        </div>
-      ) : (
-        <div>
-          pass
-        </div>
-      )}
-    </>
-  );
-};
-
-export const GameBoard_old = () => {
   const [userId, setUserId] = useState("");
   const [cellPower, setCellPower] = useState(13);
   const [isCalculating, setIsCalculating] = useState(false);

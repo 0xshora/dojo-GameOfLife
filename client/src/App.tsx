@@ -45,7 +45,7 @@ function App() {
 
   return (
     <>
-      <button onClick={create}>{isDeploying ? "deploying burner" : "create burner"}</button>
+      {/* <button onClick={create}>{isDeploying ? "deploying burner" : "create burner"}</button>
       <div className="card">
         select signer:{" "}
         <select onChange={e => select(e.target.value)}>
@@ -65,6 +65,11 @@ function App() {
         <button onClick={() => move(account, Direction.Right)}>Move Right</button> <br />
         <button onClick={() => move(account, Direction.Down)}>Move Down</button>
       </div>
+
+      <header className="z-50 text-center">
+        <h1 className="font-dot text-5xl p-4">Autonomous Game Of Life</h1>
+      </header> */}
+      
       <div className="wrapper">
         <header className="z-50 text-center">
           <h1 className="font-dot text-5xl p-4">Autonomous Game Of Life</h1>
