@@ -5,6 +5,7 @@ import { EntityIndex, setComponent } from '@latticexyz/recs';
 import { useEffect } from 'react';
 import { getFirstComponentByType } from './utils';
 import { Moves, Position } from './generated/graphql';
+import { GameBoard } from './GameBoard';
 
 function App() {
   const {
@@ -63,6 +64,12 @@ function App() {
         <button onClick={() => move(account, Direction.Left)}>Move Left</button>
         <button onClick={() => move(account, Direction.Right)}>Move Right</button> <br />
         <button onClick={() => move(account, Direction.Down)}>Move Down</button>
+      </div>
+      <div className="wrapper">
+        <header className="z-50 text-center">
+          <h1 className="font-dot text-5xl p-4">Autonomous Game Of Life</h1>
+        </header>
+        <GameBoard />
       </div>
     </>
   );
