@@ -10,6 +10,7 @@ mod tests {
 
     use dojo_gameoflife::systems::init_map_system;
     use dojo_gameoflife::systems::cul_map_system;
+    use dojo_gameoflife::systems::add_system;
 
     use dojo_gameoflife::constants::{HEIGHT, WIDTH};
 
@@ -26,6 +27,7 @@ mod tests {
         let mut systems = array::ArrayTrait::new();
         systems.append(init_map_system::TEST_CLASS_HASH);
         systems.append(cul_map_system::TEST_CLASS_HASH);
+        systems.append(add_system::TEST_CLASS_HASH);
 
         let world = spawn_test_world(components, systems);
 

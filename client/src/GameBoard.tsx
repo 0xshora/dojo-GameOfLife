@@ -9,6 +9,7 @@ import { EntityIndex, setComponent } from '@latticexyz/recs';
 import { getFirstComponentByType } from './utils';
 // import { world } from "./mud/world";
 import { Pause, Play, Power, PlayCircle } from "lucide-react";
+import { HEIGHT, WIDTH } from "./constants";
 
 function getCellColor(cell: number | undefined): string {
   const _cell = Number(cell);
@@ -87,22 +88,22 @@ export const GameBoard = () => {
     fetchData();
   }, [account.address]);
 
-  const height = 45;
-  const width = 60;
+  // const height = 45; // HEIGHT;
+  // const width = 60; // WIDTH;
 
   // 一時的に0で初期化
-  let cellData: number[] = new Array(width * height).fill(0);
+  let cellData: number[] = new Array(WIDTH * HEIGHT).fill(0);
 
   const cellValues = Array.from(cellData).map((value, index) => {
     return {
-      x: index % width,
-      y: Math.floor(index / width),
+      x: index % WIDTH,
+      y: Math.floor(index / WIDTH),
       value,
     };
   });
 
-  const rows = new Array(height).fill(0).map((_, i) => i);
-  const columns = new Array(width).fill(0).map((_, i) => i);
+  const rows = new Array(HEIGHT).fill(0).map((_, i) => i);
+  const columns = new Array(WIDTH).fill(0).map((_, i) => i);
 
 
   return (
