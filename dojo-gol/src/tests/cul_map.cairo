@@ -55,17 +55,55 @@ mod tests {
         let mut map_call_data = array::ArrayTrait::new();
         world.execute('cul_map_system'.into(), map_call_data);
 
-        let cell_1 = get!(
+        // if we set...
+        // set!(
+        //     ctx.world,
+        //     (Cell {x: 1, y: 1, cell: 1},
+        //     Cell {x: 2, y: 1, cell: 1},
+        //     Cell {x: 3, y: 1, cell: 1},
+        //     Cell {x: 1, y: 2, cell: 1},
+        //     Cell {x: 1, y: 3, cell: 1},)
+        // );
+
+
+        let cell_1_1 = get!(
             world,
             (1, 1),
             (Cell)
         );
+
+        let cell_0_2 = get!(
+            world,
+            (0, 2),
+            (Cell)
+        );
+
+        let cell_2_0 = get!(
+            world,
+            (0, 2),
+            (Cell)
+        );
+
+        cell_1_1.cell.print();
+        cell_0_2.cell.print();
+        cell_2_0.cell.print();
         
-        if cell_1.cell == 1 {
-            'Correct'.print();
+        if cell_1_1.cell == 1 {
+            'Correct for cell'.print();
         } else {
-            'Wrong'.print();
+            'Wrong for cell'.print();
         }
+        if cell_0_2.cell == 1 {
+            'Correct for cell(0,2)'.print();
+        } else {
+            'Wrong for cell(0,2)'.print();
+        }
+        if cell_2_0.cell == 1 {
+            'Correct for cell(2,0)'.print();
+        } else {
+            'Wrong for cell(2,0)'.print();
+        }
+        
 
         let newcell_1 = get!(
             world,

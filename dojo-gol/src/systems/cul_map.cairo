@@ -41,6 +41,16 @@ mod cul_map_system {
         // moves.remaining -= 1;
         // let next = next_position(position, direction);
         
+        // for debug
+        // set!(
+        //     ctx.world,
+        //     (Cell {x: 1, y: 1, cell: 1},
+        //     Cell {x: 2, y: 1, cell: 1},
+        //     Cell {x: 3, y: 1, cell: 1},
+        //     Cell {x: 1, y: 2, cell: 1},
+        //     Cell {x: 1, y: 3, cell: 1},)
+        // );
+
         // cul_newCellMap
         cul_cellMap(ctx);
         
@@ -107,6 +117,9 @@ mod cul_map_system {
                         if i > 2 {
                             break;
                         }
+                        // 'idx'.print();
+                        // i.print();
+                        // j.print();
                         
                         if (i == 1 && j == 1) {
                             i = i + 1;
@@ -135,18 +148,31 @@ mod cul_map_system {
                         // neighborIDs = ??
                         let cell = get!(
                             ctx.world,
-                            (x, y),
+                            (xx, yy),
                             (Cell)
                         );
-                        if (liveNeighbors < 3) {
-                            set!(
-                                ctx.world,
-                                Cell{x: x, y: y, cell: 1} // cell value should be ID of player...
-                            );
-                            // 'liveNeighbors < 3'.print();
-                        }
-                        liveNeighbors += 1;
-                        i = i + 1;
+                        if (cell.cell == 0) {
+                            i = i + 1;
+                            continue;
+                        } else {
+                            // 'cell.cell == 1'.print();
+                            // liveNeighbors.print();
+                            liveNeighbors = liveNeighbors + 1;
+                            i = i + 1;
+                        };
+                        // if (liveNeighbors < 3) {
+                        //     // set!(
+                        //     //     ctx.world,
+                        //     //     Cell{x: x, y: y, cell: 1} // cell value should be ID of player...
+                        //     // );
+                        //     // 'liveNeighbors < 3'.print();
+                        //     // pass
+                        //     i = i + 1;
+                        //     liveNeighbors += 1;
+                        //     continue;
+                        // }
+                        // liveNeighbors += 1;
+                        // i = i + 1;
                     };
                     i = 0;
                     j = j + 1;
@@ -169,14 +195,26 @@ mod cul_map_system {
                             Newcell{x: x, y: y, newcell: 1}
                         );
                     }
+                    // else {
+                    //     'cv is 0 and ln not 3'.print();
+                    //     x.print();
+                    //     y.print();
+                    //     liveNeighbors.print();
+                    // }
                 } else {
                     if (liveNeighbors < 2 || liveNeighbors > 3) {
-                        // new_cell[y * width + x] = 0;
+                        // // new_cell[y * width + x] = 0;
+                        // 'liveNeighbors not 2 or 3'.print();
+                        // x.print();
+                        // y.print();
                         set!(
                             ctx.world,
                             Newcell{x: x, y: y, newcell: 0}
                         );
                     } else {
+                        // 'liveNeighbors is 2 or 3'.print();
+                        // x.print();
+                        // y.print();
                         set!(
                             ctx.world,
                             Newcell{x: x, y: y, newcell: 1}
@@ -186,9 +224,11 @@ mod cul_map_system {
                 }
                 j = 0;
                 x = x + 1;
+                // break;
             };
             x = 0;
             y = y + 1;
+            // break;
         };
     }
 
