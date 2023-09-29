@@ -8,7 +8,7 @@ import { Direction, } from './dojo/createSystemCalls'
 import { EntityIndex, setComponent } from '@latticexyz/recs';
 import { getFirstComponentByType } from './utils';
 // import { world } from "./mud/world";
-// import { Pause, Play, Power, PlayCircle } from "lucide-react";
+import { Pause, Play, Power, PlayCircle } from "lucide-react";
 
 function getCellColor(cell: number | undefined): string {
   const _cell = Number(cell);
@@ -41,11 +41,19 @@ function getCellColor(cell: number | undefined): string {
   }
 }
 
+// 16進数の文字列をバイト配列に変換する
+function hexToBytes(hex: any) {
+  let bytes = [];
+  for (let c = 0; c < hex.length; c += 2)
+      bytes.push(parseInt(hex.substr(c, 2), 16));
+  return bytes;
+}
+
 export const GameBoard = () => {
   const {
     setup: {
         systemCalls: { spawn, move },
-        components: { Moves, Position },
+        components: { Moves, Position, MapConfig },
         network: { graphSdk, call }
       },
       account: { create, list, select, account, isDeploying }
@@ -57,6 +65,7 @@ export const GameBoard = () => {
   // get current component values
   const position = useComponentValue(Position, parseInt(entityId.toString()) as EntityIndex);
   const moves = useComponentValue(Moves, parseInt(entityId.toString()) as EntityIndex);
+  // const mapconfig = useComponentValue(MapConfig, parseInt(entityId.toString()) as EntityIndex);
 
   useEffect(() => {
 
@@ -68,15 +77,34 @@ export const GameBoard = () => {
       if (data) {
         const remaining = getFirstComponentByType(data.entities?.edges, 'Moves') as Moves;
         const position = getFirstComponentByType(data.entities?.edges, 'Position') as Position;
+        // const mapconfig = getFirstComponentByType(data.entities?.edges, 'MapConfig') as MapConfig;
 
         setComponent(Moves, parseInt(entityId.toString()) as EntityIndex, { remaining: remaining.remaining })
         setComponent(Position, parseInt(entityId.toString()) as EntityIndex, { x: position.x, y: position.y })
+        // setComponent(MapConfig, parseInt(entityId.toString()) as EntityIndex, { width: mapconfig.width, height: mapconfig.height })
       }
     }
     fetchData();
   }, [account.address]);
 
-  
+  const height = 45;
+  const width = 60;
+
+  // 一時的に0で初期化
+  let cellData: number[] = new Array(width * height).fill(0);
+
+  const cellValues = Array.from(cellData).map((value, index) => {
+    return {
+      x: index % width,
+      y: Math.floor(index / width),
+      value,
+    };
+  });
+
+  const rows = new Array(height).fill(0).map((_, i) => i);
+  const columns = new Array(width).fill(0).map((_, i) => i);
+
+
   return (
     <>
       <div className="flex justify-center pt-2 pb-4 font-dot text-xl">
@@ -91,145 +119,6 @@ export const GameBoard = () => {
       </div>
 
       {entityId ? (
-        <div>
-          hello
-        </div>
-      ) : (
-        <div>
-          pass
-        </div>
-      )}
-    </>
-  );
-};
-
-export const GameBoard_old = () => {
-  const [userId, setUserId] = useState("");
-  const [cellPower, setCellPower] = useState(13);
-  const [isCalculating, setIsCalculating] = useState(false);
-
-  // const {
-  //   components: { MapConfig, Players, CalculatedCount },
-  //   network: { singletonEntity },
-  //   systemCalls: { add, join, calculate, getCellPower, clear },
-  // } = useMUD();
-
-  const {
-    setup: {
-      systemCalls: { spawn, move },
-      components: { Moves, Position },
-      network: { graphSdk, call }
-    },
-    account: { create, list, select, account, isDeploying }
-  } = useDojo();
-
-  setUserId(account.address);
-  
-
-  // useEffect(() => {
-  //   //if userId is set, set cellPower
-  //   if (userId) {
-  //     getCellPower(Number(userId)).then((power) => {
-  //       console.log("power", power);
-  //       setCellPower(power!);
-  //     });
-  //   }
-  // }, [userId]);
-
-  // entity id - this example uses the account address as the entity id
-  const entityId = account.address;
-
-  // get current component values
-  const position = useComponentValue(Position, parseInt(entityId.toString()) as EntityIndex);
-  const moves = useComponentValue(Moves, parseInt(entityId.toString()) as EntityIndex);
-
-
-  // userId == entityId
-  // useEffect(() => {
-  //   const UID = localStorage.getItem("autonomousLifeGameUID");
-  //   if (UID) {
-  //     setUserId(UID);
-  //   }
-  // }, [userId]);
-
-  // 計算中であればインターバルを行う。
-  useEffect(() => {
-    let calculateInterval: any;
-
-    if (isCalculating) {
-      calculateInterval = setInterval(async () => {
-        // await calculate();
-        console.log("calculate"); // temporary
-      }, 1500);
-    }
-
-    return () => {
-      if (calculateInterval) {
-        clearInterval(calculateInterval);
-      }
-    };
-  }, [isCalculating]); // isCalculating is a dependency now
-
-  /*
-  // mapに関しては後ほど実装する
-  //map
-  const mapConfig = useComponentValue(MapConfig, singletonEntity);
-  const moves = useComponentValue(Moves, parseInt(entityId.toString()) as EntityIndex);
-
-  if (mapConfig == null) {
-    throw new Error(
-      "map config not set or not ready, only use this hook after loading state === LIVE"
-    );
-  }
-
-  const { width, height, cell: cellData } = mapConfig;
-  */
-
-
-  const height = 45;
-  const width = 60;
-
-  // 一時的に0で初期化
-  let cellData: number[] = new Array(width * height).fill(0);
-
-  const cellValues = Array.from(hexToArray(cellData)).map((value, index) => {
-    return {
-      x: index % width,
-      y: Math.floor(index / width),
-      value,
-    };
-  });
-
-
-  const rows = new Array(height).fill(0).map((_, i) => i);
-  const columns = new Array(width).fill(0).map((_, i) => i);
-  // const activeCells: number = cellValues.filter((obj) => obj.value != 0).length;
-
-  // //stamina
-  // const stamina = useComponentValue(
-  //   Players,
-  //   world.registerEntity({ id: userId })
-  // )?.cellPower;
-
-  /*
-  //CalculatedCount
-  const calculatedCount = useComponentValue(CalculatedCount, singletonEntity);
-  // const moves = useComponentValue(Moves, parseInt(entityId.toString()) as EntityIndex);
-  */
-
-  return (
-    <>
-      <div className="flex justify-center pt-2 pb-4 font-dot text-xl">
-        <div className="mr-8">
-          Cycle: 0
-          {/* Cycle: {BigInt(calculatedCount?.value ?? 0).toLocaleString()} */}
-        </div>
-        <div className="">
-          {/* Cells: {BigInt(activeCells).toLocaleString()} */}
-          Cells: 10
-        </div>
-      </div>
-      {userId ? (
         <>
           <div className="flex justify-center">
             <div className="grid gap-1">
@@ -238,7 +127,6 @@ export const GameBoard_old = () => {
                   const cell = cellValues.find(
                     (t) => t.x === x && t.y === y
                   )?.value;
-
                   return (
                     <div
                       key={`${x},${y}`}
@@ -247,14 +135,10 @@ export const GameBoard_old = () => {
                         gridRow: y + 1,
                       }}
                       onClick={async (event) => {
-                        if (cellPower > 0) {
-                          setCellPower(cellPower - 1);
-                        }
-                        event.preventDefault();
-                        // await add(x, y, Number(userId));
+                        console.log("click");
                       }}
                     >
-                      <div
+                      <div 
                         className={`h-2.5 w-2.5 ${getCellColor(0) ?? ""}`}
                       />
                     </div>
@@ -263,7 +147,7 @@ export const GameBoard_old = () => {
               )}
             </div>
           </div>
-          {userId && (
+          {entityId && (
             <>
               <div className="flex justify-center py-4 font-dot items-center">
                 <div
@@ -271,39 +155,20 @@ export const GameBoard_old = () => {
                     // Number(userId)
                   )}`}
                 />
-                <div className="mr-8">Player Id: {userId}</div>
-                <div className="mr-12">Stamina: {cellPower}</div>
+                {/* <div className="mr-8">Player Id: {entityId}</div> */}
+                <div className="mr-8">Player Id: {1}</div>
+                <div className="mr-12">Stamina: {moves ? `${moves['remaining']}` : 'Need to Spawn'}</div>
                 <button
                   type="button"
                   className="text-white border-gray-200 hover:bg-gray-200/5 border-2 px-4 py-1.5 text-center mr-4 rounded-sm"
-                  onClick={async (event) => {
-                    event.preventDefault();
-                    setIsCalculating(!isCalculating);
-                  }}
+                  onClick={() => {console.log("pass")}}
                 >
-                  {isCalculating ? (
-                    <div className="flex items-center">
-                      <Pause size={18} className="mr-1" />
-                      Stop
-                    </div>
-                  ) : (
-                    <div className="flex items-center">
-                      <Play size={18} className="mr-1" />
-                      Start
-                    </div>
-                  )}
+                  Stop / Pass
                 </button>
                 <button
                   type="button"
                   className="text-white border-gray-200 hover:bg-gray-200/5 border-2 px-4 py-1.5 text-center mr-4 rounded-sm"
-                  onClick={async (event) => {
-                    event.preventDefault();
-                    // await clear();
-                    setUserId("");
-                    localStorage.removeItem("autonomousLifeGameUID");
-                    setCellPower(13);
-                    setIsCalculating(false);
-                  }}
+                  onClick={() => {console.log("clear")}}
                 >
                   <div className="flex items-center text-amber-600">
                     <Power size={18} className="mr-1" />
@@ -319,19 +184,7 @@ export const GameBoard_old = () => {
           <button
             type="button"
             className="text-white border-gray-200 hover:bg-gray-200/5 border-4 px-8 py-3 text-center rounded-sm mt-32 text-2xl font-dot"
-            onClick={
-              // async (event) => {
-              // event.preventDefault();
-              // const joinedId = (await join())!.value;
-              // setUserId(joinedId.toString());
-              // localStorage.setItem(
-              //   "autonomousLifeGameUID",
-              //   joinedId.toString()
-              // );
-              // console.log("join", joinedId);
-              // }
-              async () => {console.log("button");}
-          }
+            onClick={()=>{console.log("join")}}
           >
             <div className="flex items-center">
               <PlayCircle size={26} className="mr-4" />
